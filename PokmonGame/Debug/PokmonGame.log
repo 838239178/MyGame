@@ -1,0 +1,73 @@
+﻿  PokmonGame.cpp
+D:\gameMAKE\PokmonGame\Pokemon.h(55,17): warning C4244: “*=”: 从“double”转换到“int”，可能丢失数据
+D:\gameMAKE\PokmonGame\Pokemon.h(58,12): warning C4244: “*=”: 从“double”转换到“int”，可能丢失数据
+D:\gameMAKE\PokmonGame\Pokemon.h(59,17): warning C4244: “*=”: 从“double”转换到“int”，可能丢失数据
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(283,12): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(286,12): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(317,1): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(133): message : 参见“strcpy”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(341,20): warning C4018: “<”: 有符号/无符号不匹配
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(336,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): message : 参见“sprintf”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(337,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): message : 参见“sprintf”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(342,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): message : 参见“sprintf”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(343,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): message : 参见“sprintf”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(361,9): warning C4018: “<”: 有符号/无符号不匹配
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(397,12): warning C4018: “<”: 有符号/无符号不匹配
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(409,1): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(133): message : 参见“strcpy”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(413,1): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(133): message : 参见“strcpy”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(416,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): message : 参见“sprintf”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(484,28): warning C4018: “<”: 有符号/无符号不匹配
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(484,26): warning C4018: “<”: 有符号/无符号不匹配
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(489,12): warning C4018: “<”: 有符号/无符号不匹配
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(485,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): message : 参见“sprintf”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(576,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): message : 参见“sprintf”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(597,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): message : 参见“sprintf”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(608,36): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(608,22): warning C4244: “初始化”: 从“double”转换到“const int”，可能丢失数据
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(610,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): message : 参见“sprintf”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(637,12): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(648,13): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(657,29): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(661,12): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(749,13): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(760,14): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(769,34): warning C4244: “参数”: 从“double”转换到“int”，可能丢失数据
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(804,7): warning C4101: “s”: 未引用的局部变量
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(874,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): message : 参见“sprintf”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(875,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): message : 参见“sprintf”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(876,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): message : 参见“sprintf”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(884,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): message : 参见“sprintf”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(885,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): message : 参见“sprintf”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(886,1): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): message : 参见“sprintf”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(921,1): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(133): message : 参见“strcpy”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(928,1): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(133): message : 参见“strcpy”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(937,1): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(133): message : 参见“strcpy”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(994,1): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(133): message : 参见“strcpy”的声明
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(1079): message : 查看对正在编译的函数 模板 实例化“void darwmsg<object>(T)”的引用
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(1079): message :         with
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(1079): message :         [
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(1079): message :             T=object
+D:\gameMAKE\PokmonGame\PokmonGame.cpp(1079): message :         ]
+D:\gameMAKE\PokmonGame\Item.h(24): warning C4715: “Item::typestr”: 不是所有的控件路径都返回值
+  PokmonGame.vcxproj -> D:\gameMAKE\PokmonGame\Debug\PokmonGame.exe
