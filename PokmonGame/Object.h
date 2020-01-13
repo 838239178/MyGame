@@ -6,7 +6,7 @@ public:
 	int x, y;					//坐标
 	bool fight;
 	string text;				//剧情文本
-	string pic;					//图片
+	IMAGE pic;					//图片
 	string picB;
 };
 

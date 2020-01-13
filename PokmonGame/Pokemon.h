@@ -12,6 +12,7 @@ public:
 	int life;			//当前生命值
 	int ATK;			//攻击力
 	int DEF;			//防御力
+	int INK;			//特攻
 	int need_EXP;		//升级所需经验值
 	int EXP;			//当前经验值	
 
@@ -23,7 +24,7 @@ public:
 	/*类函数*/
 	void levelup();
 	void use(Potion&);
-	void hurt(double rate, int atk);
+	void hurt(double, double);
 };
 
 Pokemon Ciken;        //水鸡
@@ -46,19 +47,21 @@ void pokemon_start()
 	Ciken.max_life = 100;
 	Ciken.level = 100;
 	Ciken.ATK = 10;
+	Ciken.INK = 12;
 	Ciken.need_EXP = 50;
 	Ciken.EXP = 0;
 	Ciken.life = Ciken.max_life;
 	Ciken.property = WATER;
-	Ciken.skill.push_back(w_1);
 	Ciken.skill.push_back(n_1);
+	Ciken.skill.push_back(w_1);
 	Ciken.name = "水稚鸡";
 
 	Charmander.max_life = 100;
 	Charmander.level = 1;
 	Charmander.ATK = 12;
+	Charmander.INK = 10;
 	Charmander.need_EXP = 50;
-	Charmander.EXP = 49;
+	Charmander.EXP = 0;
 	Charmander.life = Charmander.max_life;
 	Charmander.property = FIRE;
 	Charmander.skill.push_back(f_1);
@@ -89,8 +92,8 @@ void Pokemon::use(Potion& item)		//使用道具
 	}
 	item.count--;
 }
-void Pokemon::hurt(double rate, int atk)
+void Pokemon::hurt(double rate, double dmg)
 {
-	life -= atk * rate;
+	life -= dmg * rate;
 	life = (life < 0) ? 0 : life;
 }

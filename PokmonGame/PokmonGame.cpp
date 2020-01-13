@@ -36,6 +36,7 @@
 #include <ctime>
 #include <mmsystem.h>
 #include "Item.h"
+#include "default.h"
 #include "Skill.h"
 #include "Pokemon.h"
 #include "Object.h"
@@ -59,9 +60,8 @@ void npc_strat();												//main地图角色初始化
 void updata();													//刷新画面
 void npcmove(Npc&);												//npc随机移动
 void scanINPUT();												//检查输入
-void cantmove(Npc,bool[]);										//障碍物判断
+void cantmove(const Npc&, bool[]);								//障碍物判断
 void interface_switch();										//界面切换动画
-template <class T, class S> int  CalculateDIS(T n1, S n2);		//计算距离
 template <class T> void darwmsg(T);								//显示一个对话框
 //--------------------菜单------------------
 void MenuSys();
@@ -78,7 +78,7 @@ void CardShow();
 void CardMsgInput();
 //-------------------战斗--------------------
 void battlesys(Npc&);				//战斗系统
-void battleshow(Npc&);				//绘制战斗场景
+void battleshow(const Npc&);				//绘制战斗场景
 void battlestart(Npc&);					//开场动画及初始化
 void battlefinish(Npc&);			//战斗结束动画
 void battleinput(Npc&);				//战斗时输入检测
@@ -87,9 +87,10 @@ void battleLose();					//战斗失败效果
 void battlemusic_open();			//战斗相关音乐打开
 void battlemusic_close();			//………………关闭
 void battlemenu();					//战斗时的菜单
-void playerAttack(Npc&,int);		//玩家攻击动画及效果
+void playerAttack(Npc&, int);		//玩家攻击动画及效果
 void playerRun(Npc&);				//逃跑
 void emyAttack(Npc&);				//敌人进攻
+int emySkill(Pokemon&);				//敌人技能使用逻辑
 void attackflush(Npc);				//攻击动画
 int is_over(Npc&);
 
@@ -100,6 +101,8 @@ IMAGE bag[3];			//三个背包
 IMAGE PKlist[5];		//0：背景图，1：选择框，2：选择框掩码，3：大框，4：大框掩码图；
 IMAGE statebk[10];		//战斗时的技能窗口  （0：火 1：水）
 IMAGE battle;			//战斗画面
+IMAGE card;				//名片背景
+IMAGE roleOnCard[2];	//名片人像
 
 
 int mapSIZEx, mapSIZEy;				//地图大小
@@ -124,6 +127,11 @@ int turn;							//-1：玩家，1：敌人
 int point3X, point3Y;				//战斗菜单的指示器
 int playerflush;					//控制玩家攻击动画
 int emyflush;						//控制敌人攻击动画
+int onPlay;							//控制濒死音效播放
+/*game_time*/
+time_t gameStart;
+time_t gameEnd;
+int timeSave;
 
 
 void main_mapstart()
@@ -175,6 +183,9 @@ void startup()
 	loadimage(&npc[1].battlepicB, "test\\npc1fightblack.png");
 	loadimage(&hp_potion.pic, "test\\hppotion.png");
 	loadimage(&battle, "test\\battle1.png");
+	loadimage(&card, "test\\card.png");
+	loadimage(&roleOnCard[0], "test\\roleOnCardB.png");
+	loadimage(&roleOnCard[1], "test\\roleOnCard.png");
 	loadimage(&msgbk[0], "test\\msgbk.png");		// 0 ：战斗的对话框
 	loadimage(&msgbk[1], "test\\msgtalk.png");		// 1：与npc对话
 	loadimage(&msgbk[2], "test\\menu.png");			//2：菜单
@@ -196,6 +207,7 @@ void startup()
 	loadimage(&PKlist[4], "test\\大框B.png");
 
 
+
 	hp_potion.count = 5;
 	hp_potion.type = HPPOTION;
 	hp_potion.name = "伤药";
@@ -207,8 +219,10 @@ void startup()
 	board[1].x = 250;//246;
 	board[1].y = 210;//668;
 	board[1].text = "board1text.txt";
+
+	timeSave = 4000;					//暂时
 }
-void cantmove(Npc role, bool can[])
+void cantmove(const Npc& role, bool can[])
 {
 	if (cover_glass[role1.y - mapY + 10][role1.x - mapX] != 0)
 		can[cDN] = 0;
@@ -219,13 +233,30 @@ void cantmove(Npc role, bool can[])
 	if (cover_glass[role1.y - mapY][role1.x - mapX - 10] != 0)
 		can[cLF] = 0;
 }
-template <class T, class S>
-int CalculateDIS(T n1, S n2)   //计算对象间的距离
+template <class T>
+void darwmsg(T role)  //绘制对话框
 {
-	int x = n1.x - n2.x;
-	int y = n1.y - n2.y;
-	int dis = (int)sqrt(x * x + y * y);
-	return dis;
+	Settxt(BLACK);
+	char s[100] = "";
+	//加入文件读取文本
+	ifstream msg(role.text);   //只读打开
+	while (!msg.eof()) {
+		playmic("chosemic");
+		putimage(0, 403, &msgbk[1]);
+		msg.getline(s, 100);     //读取一行
+		outtextxy(60, 420, s);
+		Sleep(150);  //防止闪频
+		FlushBatchDraw();
+		system("pause"); //按任意键继续
+	}
+	if (role.fight = true && !role1.theMON[role1.useNo].life) {
+		putimage(0, 403, &msgbk[1]);
+		strcpy(s, "你的首发精灵没有体力了");
+		outtextxy(60, 420, s);
+		FlushBatchDraw();
+		system("pause");
+	}
+	msg.close(); //关闭
 }
 void interface_switch()								//界面切换动画
 {
@@ -245,18 +276,6 @@ void interface_switch()								//界面切换动画
 		if (j == 0)
 			i++;
 	}
-}
-void playmic(string name, string odds = "")
-{
-	string ply = "play " + name + " " + odds;
-	string sek = "seek " + name + " to start";
-	mciSendString(sek.c_str(), 0, 0, 0);
-	mciSendString(ply.c_str(), 0, 0, 0);
-}
-void stopmic(string name)
-{
-	string stp = "stop " + name;
-	mciSendString(stp.c_str(), 0, 0, 0);
 }
 void updata()
 {
@@ -300,19 +319,53 @@ void npcmove(Npc& people)
 		if (people.Di++ == 2) people.Di = 1;
 	}
 }
-
-void Settxt(int color = BLACK, int hight = 0, int weight = 400, int width = 0)
+//*****************CARD**************
+void CardSys()
 {
-	LOGFONT f;
-	settextcolor(color);
-	gettextstyle(&f);					// 获取当前字体设置
-	f.lfHeight = hight;						// 设置字体高度为
-	f.lfWeight = weight;					//字体粗细
-	f.lfWidth = width;                     //设置宽度
-	_tcscpy(f.lfFaceName, _T("微软雅黑"));    // 设置字体
-	//f.lfQuality = ANTIALIASED_QUALITY;    // 设置输出效果为抗锯齿  
-	settextstyle(&f);                     // 应用字体样式
-	setbkmode(TRANSPARENT);
+	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+	playmic("openmic");
+	cleardevice();
+	Resize(0, 480, 320);
+	while (1) {
+		CardShow();
+		if (GetAsyncKeyState(0x44) & 0x8000) {     //D
+			playmic("openmic");
+			break;
+		}
+	}
+	Resize(0, 495, 463);
+	updata();
+	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+}
+void CardShow()
+{
+	Settxt(BLACK);
+	char s[10];
+	putimage(0, 0, &card);			//背景
+	putimage(360, 120, &roleOnCard[0], NOTSRCERASE);
+	putimage(360, 120, &roleOnCard[1], SRCINVERT);
+	outtextxy(280, 35, "IDNo.000000001");
+	//名字
+	outtextxy(50, 77, "NAME:");
+	outtextxy(190, 77, "史上最憨训练师");
+	//金钱
+	outtextxy(50, 133, "MONEY:");
+	sprintf(s, "%6dG", role1.money);
+	outtextxy(244, 133, s);
+	//宝可梦数量
+	outtextxy(50, 165, "POKeDEX:");
+	sprintf(s, "%d", role1.theMON.size());
+	outtextxy(270, 165, s);
+	//获取游戏时长
+	time(&gameEnd);
+	int timetotal = difftime(gameEnd, gameStart) + timeSave;
+	int hh = timetotal / 3600;
+	int mm = timetotal / 60 - hh * 60;
+	int ss = timetotal - hh * 3600 - mm * 60;
+	sprintf(s, "%02d:%02d:%02d",hh,mm,ss);
+	outtextxy(50, 197, "TIME:");
+	outtextxy(235, 197, s);
+	FlushBatchDraw();
 }
 //*****************pokmonlist**************
 void PKlistshow()
@@ -511,6 +564,7 @@ void MenuShow()
 	Settxt(BLACK);
 	outtextxy(385, 70, "背包");
 	outtextxy(385, 90, "精灵");
+	outtextxy(385, 110, "名片");
 	FlushBatchDraw();
 }
 void MenuInput()
@@ -519,11 +573,11 @@ void MenuInput()
 		playmic("chosemic");
 		if (GetAsyncKeyState(VK_UP) & 0x8000) {
 			if (pointY > 70)
-				pointY -= 20;
+				pointY -= 22;
 		}
 		else if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
 			if (pointY < 310)
-				pointY += 20;
+				pointY += 22;
 		}
 		else if (GetAsyncKeyState(0x41) & 0x8000) {
 			playmic("chosemic");
@@ -533,8 +587,11 @@ void MenuInput()
 				BagSys();
 				updata();
 				break;
-			case 93://第二个选项
+			case 95://第二个选项
 				PKlistsys();
+				break;
+			case 117://第三个
+				CardSys();
 				break;
 			}
 		}
@@ -625,13 +682,14 @@ void attackflush(Npc emy)
 	turn = (tmp == -2) ? 1 : -1;
 	//
 }
-void playerAttack(Npc& emy,int no)
+void playerAttack(Npc& emy, int no)
 {
 	if (no >= role1.theMON[role1.useNo].skill.size())
 		return;
-	Skill skl = role1.theMON[role1.useNo].skill[no];
+	Skill& skl = role1.theMON[role1.useNo].skill[no];
+	skl.PP--;
 	string s = "你使用了" + skl.name;
-	putimage(0, 279, &msgbk[0]);    //覆盖之前的画面
+	putimage(0, 279, &msgbk[0]);		//覆盖之前的画面
 	outtextxy(40, 300, s.c_str());
 	FlushBatchDraw();
 	Sleep(600);
@@ -643,6 +701,7 @@ void playerAttack(Npc& emy,int no)
 		outtextxy(40, 300, "没有命中");
 		FlushBatchDraw();
 		Sleep(600);
+		turn = 1;
 	}
 	else {
 		attackflush(emy);
@@ -671,8 +730,14 @@ void playerAttack(Npc& emy,int no)
 			r *= 1.5;
 		}
 	}
-	int damage = role1.theMON[role1.useNo].ATK * 0.3 + skl.power;
+	double damage = 0;
+	switch (skl.type)
+	{
+	case ATN:damage = emy.theMON[emy.useNo].ATK * 0.3 + skl.power; break;
+	case INT:damage = emy.theMON[emy.useNo].INK * 0.3 + skl.power; break;
+	}
 	emy.theMON[emy.useNo].hurt(r, damage);
+	Sleep(600);
 }
 void playerRun(Npc& emy)
 {
@@ -702,6 +767,7 @@ void playerRun(Npc& emy)
 void battleinput(Npc& emy)
 {
 	if (_kbhit()) {
+		playmic("chosemic");
 		if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
 			if (point3X > 38) point3X -= 214;
 		}
@@ -720,11 +786,10 @@ void battleinput(Npc& emy)
 		else if (GetAsyncKeyState(0x41) & 0x8000) {
 			if (point3X == 38 && point3Y == 299)			//左上按钮
 			{
-				if(turn == -1)
+				if (turn == -1)
 					turn = -2;
 				else if (turn == -2) {
 					playerAttack(emy, 0);
-					//turn = 1;
 				}
 			}
 			else if (point3X == 252 && point3Y == 299)		//右上按钮
@@ -735,21 +800,17 @@ void battleinput(Npc& emy)
 				}
 				else if (turn == -2) {
 					playerAttack(emy, 1);
-					//turn = 1;
 				}
 			}
 			else if (point3X == 252 && point3Y == 379)		//右下按钮
 			{
 				if (turn == -1) {								//逃跑
 					playerRun(emy);
-					turn = 1;
 				}
 				else if (turn == -2) {
 					playerAttack(emy, 3);
-					//turn = 1;
 				}
 			}
-			Sleep(500);
 		}
 		else if (GetAsyncKeyState(0x44) & 0x8000) {
 			if (turn == -2)
@@ -758,7 +819,21 @@ void battleinput(Npc& emy)
 	}
 	FlushMouseMsgBuffer();
 }
-void emyAttack(Npc& emy)   //敌人的攻击方式
+int emySkill(Pokemon& emy)		//敌人的技能选择逻辑
+{
+	for (int i = 0; i < emy.skill.size(); i++) {
+		if (emy.skill[i] > role1.theMON[role1.useNo].property)			//优先级1：克制对手属性的技能
+			return i;
+		else if (emy.property < role1.theMON[role1.useNo].property) {	//被对手克制
+			if (emy.skill[i].type == DEBUFF)							//优先级2：使用削弱对手能力的技能
+				return i;
+			else if (emy.skill[i].type == BUFF)							//优先级3：使用提高自己能力的技能
+				return i;
+		}
+	}
+	return 0;
+}
+void emyAttack(Npc& emy)				//敌人的攻击方式
 {
 	/*
 		1.血量充足则攻击
@@ -771,13 +846,19 @@ void emyAttack(Npc& emy)   //敌人的攻击方式
 		FlushBatchDraw();
 		playmic("covermic");
 		Sleep(800);
-		emy.theMON[emy.useNo].life += emy.item[0].size;
+		//emy.theMON[emy.useNo].life += emy.item[0].size;
+		emy.theMON[emy.useNo].use(emy.item[0]);
 		turn = -1;
 	}
-	else {	
-		outtextxy(40, 300, "对方使用了撞击");
+	else {
+		int i = emySkill(emy.theMON[emy.useNo]);
+		Skill& skl = emy.theMON[emy.useNo].skill[i];
+		skl.PP--;
+		string s = "对方使用了" + skl.name;
+		putimage(0, 279, &msgbk[0]);    //覆盖之前的画面
+		outtextxy(40, 300, s.c_str());
 		FlushBatchDraw();
-		Sleep(600);		
+		Sleep(600);
 		double r = 1;   //伤害倍数；
 		srand(time(NULL));
 		if (3 == rand() % 10) {
@@ -786,14 +867,26 @@ void emyAttack(Npc& emy)   //敌人的攻击方式
 			FlushBatchDraw();
 			Sleep(600);
 			r = 0;
+			turn = -1;
 		}
 		else {
 			attackflush(emy);
 			playmic("attackmic");
+			//属性克制判定
 			putimage(0, 279, &msgbk[0]);    //覆盖之前的画面
-			outtextxy(40, 300, "效果一般");
+			if (skl > role1.theMON[role1.useNo].property) {
+				outtextxy(40, 300, "效果拔群");
+				r *= 1.5;
+			}
+			else if (skl < role1.theMON[role1.useNo].property) {
+				outtextxy(40, 300, "效果微弱");
+				r *= 0.5;
+			}
+			else
+				outtextxy(40, 300, "效果一般");
 			FlushBatchDraw();
 			Sleep(600);
+			//命中要害的判定
 			srand(time(NULL));
 			if (3 == rand() % 7) {
 				Sleep(600);
@@ -804,8 +897,14 @@ void emyAttack(Npc& emy)   //敌人的攻击方式
 				r = 1.5;
 			}
 		}
-		role1.theMON[role1.useNo].hurt(r, emy.theMON[emy.useNo].ATK);
-		Sleep(1000);
+		double damage = 0;
+		switch (skl.type)
+		{
+		case ATN:damage = emy.theMON[emy.useNo].ATK * 0.3 + skl.power; break;
+		case INT:damage = emy.theMON[emy.useNo].ATK * 0.3 + skl.power; break;
+		}
+		role1.theMON[role1.useNo].hurt(r, damage);
+		Sleep(600);
 	}
 }
 void battlemusic_open()							//关闭背景音乐 打开战斗音乐
@@ -891,9 +990,14 @@ void battlemenu()
 	else if (turn == -2) {
 		putimage(point3X, point3Y, &bottom[5]);		//指示器 
 		int i = 0;
+		char s[10];
 		for (int y = 300; y <= 380; y += 80) {
 			for (int x = 40; x <= 254; x += 214) {
+				Settxt(BLACK);
 				outtextxy(x, y, temp.skill[i].name.c_str());
+				Settxt(BLACK, 20, 20);
+				sprintf(s, "PP:%2d/%2d", temp.skill[i].PP, temp.skill[i].PPmax);
+				outtextxy(x + 115, y + 30, s);
 				if (i++ == temp.skill.size() - 1) {
 					i = -1;
 					break;
@@ -903,21 +1007,26 @@ void battlemenu()
 		}
 	}
 }
-void battleshow(Npc& emy)  //绘制战斗场景
+void battleshow(const Npc& emy)  //绘制战斗场景
 {
 	cleardevice();
 	char hp[50];
 	char lv[10];
 	char exp[50];
-	Settxt(BLACK);
-	if (role1.theMON[role1.useNo].life < (double)role1.theMON[role1.useNo].max_life * 0.15)
-		playmic("deadmic", "repeat");
-	else
+	if (role1.theMON[role1.useNo].life < (double)role1.theMON[role1.useNo].max_life * 0.25) {
+		if (!onPlay) {
+			playmic("deadmic", "repeat");
+			onPlay = 1;
+		}
+	}
+	else {
 		stopmic("deadmic");
+		onPlay = 0;
+	}
 	putimage(0, 0, &battle);						//场景
 	putimage(0, 279, &msgbk[0]);					//对话框
-
-	if (playerflush != 15) battlemenu();
+	if (playerflush != 15) battlemenu();	
+	Settxt(BLACK);
 	//主角
 	putimage(10, 120, &statebk[role1.theMON[role1.useNo].property]);//状态窗口		
 	putimage(30 + playerflush, 159, &role1.theMON[role1.useNo].picB, NOTSRCERASE);//主角宠物
@@ -1024,31 +1133,6 @@ void battlesys(Npc& emy)   //战斗系统
 	onBattle = 0;
 }
 //____________________________________________
-template <class T>
-void darwmsg(T role)  //绘制对话框
-{
-	Settxt(BLACK);
-	char s[100] = "";
-	//加入文件读取文本
-	ifstream msg(role.text);   //只读打开
-	while (!msg.eof()) {
-		playmic("chosemic");
-		putimage(0, 403, &msgbk[1]);
-		msg.getline(s, 100);     //读取一行
-		outtextxy(60, 420, s);
-		Sleep(150);  //防止闪频
-		FlushBatchDraw();
-		system("pause"); //按任意键继续
-	}
-	if (role.fight = true && !role1.theMON[role1.useNo].life) {
-		putimage(0, 403, &msgbk[1]);
-		strcpy(s, "你的首发精灵没有体力了");
-		outtextxy(60, 420, s);
-		FlushBatchDraw();
-		system("pause");
-	}
-	msg.close(); //关闭
-}
 void scanINPUT()
 {
 	bool can[5];
@@ -1144,6 +1228,7 @@ void scanINPUT()
 }
 int main()
 {
+	time(&gameStart);
 	startup();
 	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 	while (1) {
@@ -1155,6 +1240,7 @@ int main()
 	};
 	EndBatchDraw();
 	closegraph();
+	time(&gameEnd);
 	mciSendString("close chosemic", 0, 0, 0);
 	mciSendString("close backmic", 0, 0, 0);
 	mciSendString("close battlemic", 0, 0, 0);

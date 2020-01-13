@@ -35,5 +35,8 @@
     <ClInclude Include="Object.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="default.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
