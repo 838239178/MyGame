@@ -16,8 +16,8 @@ public:
 	int need_EXP;		//升级所需经验值
 	int EXP;			//当前经验值	
 
-	IMAGE pic;			//战斗图
-	IMAGE picB;
+	IMAGE pic[2];			//战斗图	0:self 1:emy
+	IMAGE picB[2];
 	IMAGE piclist;		//列表小图标
 	IMAGE piclistB;
 	string text;		//存档地址
@@ -29,23 +29,28 @@ public:
 
 Pokemon Ciken;        //水鸡
 Pokemon Charmander;   //小火龙
+vector<Pokemon>Wild;
 
 void pokemon_start()
 {
 	//图片
 	/*小火龙*/
-	loadimage(&Charmander.pic, "test\\firedragon.png");
-	loadimage(&Charmander.picB, "test\\firedragonblack.png");
+	loadimage(&Charmander.pic[0], "test\\firedragon_self.png");
+	loadimage(&Charmander.picB[0], "test\\firedragonblack_self.png");
+	loadimage(&Charmander.pic[1], "test\\firedragon_emy.png");
+	loadimage(&Charmander.picB[1], "test\\firedragonblack_emy.png");
 	loadimage(&Charmander.piclist, "test\\小火龙图标.png");
 	loadimage(&Charmander.piclistB, "test\\小火龙图标B.png");
 	/*水稚鸡*/
-	loadimage(&Ciken.pic, "test\\ciken.png");
-	loadimage(&Ciken.picB, "test\\cikenblack.png");
+	loadimage(&Ciken.pic[0], "test\\ciken_self.png");
+	loadimage(&Ciken.picB[0], "test\\cikenblack_self.png");
+	loadimage(&Ciken.pic[1], "test\\ciken_emy.png");
+	loadimage(&Ciken.picB[1], "test\\cikenblack_emy.png");
 	loadimage(&Ciken.piclist, "test\\水稚鸡图标.png");
 	loadimage(&Ciken.piclistB, "test\\水稚鸡图标B.png");
 	//基本属性
 	Ciken.max_life = 100;
-	Ciken.level = 100;
+	Ciken.level = 1;
 	Ciken.ATK = 10;
 	Ciken.INK = 12;
 	Ciken.need_EXP = 50;
@@ -67,6 +72,9 @@ void pokemon_start()
 	Charmander.skill.push_back(f_1);
 	Charmander.skill.push_back(n_1);
 	Charmander.name = "小火龙";
+
+	Wild.push_back(Ciken);
+	Wild.push_back(Charmander);
 }
 
 void Pokemon::levelup()				//升级

@@ -18,26 +18,26 @@ public:
 	int useNo;					//使用第几只Pokemon
 };
 
-Npc role1;				//主角
+Npc player;				//主角
 vector<Npc> npc(10);	//路人
 
 void npc_strat()
 {
 	//角色初始化
-	role1.x = 126;
-	role1.y = 250;
-	role1.sizex = 35;
-	role1.sizey = 30;
-	role1.Ri = 3;				//人物向右走坐标移动   3-->5
-	role1.Di = 0;				//1-->2
-	role1.Ui = 6;				//6-->8
-	role1.Li = 9;				//9-->11
-	role1.state = 0;
-	role1.fight = false;
-	role1.useNo = 0;
-	role1.money = 100;
-	role1.theMON.push_back(Charmander);
-	role1.theMON.push_back(Ciken);
+	player.x = 126;
+	player.y = 250;
+	player.sizex = 35;
+	player.sizey = 30;
+	player.Ri = 3;				//人物向右走坐标移动   3-->5
+	player.Di = 0;				//1-->2
+	player.Ui = 6;				//6-->8
+	player.Li = 9;				//9-->11
+	player.state = 0;
+	player.fight = false;		
+	player.useNo = 0;
+	player.money = 100;
+	player.theMON.push_back(Charmander);
+	player.theMON.push_back(Ciken);
 
 	npc[1].x = 100;
 	npc[1].y = 150;
