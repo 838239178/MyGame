@@ -3,6 +3,7 @@
 void playmic(string name, string odds = "");
 void stopmic(string name);
 void Settxt(int color = BLACK, int hight = 0, int weight = 400, int width = 0);
+void darwmsg(string m);
 template <class T, class S> int  CalculateDIS(T n1, S n2);		//计算距离
 
 void playmic(string name, string odds)
@@ -25,7 +26,6 @@ int CalculateDIS(T n1, S n2)   //计算对象间的距离
 	int dis = (int)sqrt(x * x + y * y);
 	return dis;
 }
-
 void Settxt(int color, int hight, int weight, int width)
 {
 	LOGFONT f;

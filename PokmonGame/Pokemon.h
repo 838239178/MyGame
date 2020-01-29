@@ -23,7 +23,7 @@ public:
 	string text;		//存档地址
 	/*类函数*/
 	void levelup();
-	void use(Potion&);
+	int use(Potion&);
 	void hurt(double, double);
 };
 
@@ -86,19 +86,23 @@ void Pokemon::levelup()				//升级
 	max_life *= 1.3;
 	life = max_life;
 }
-void Pokemon::use(Potion& item)		//使用道具
+int Pokemon::use(Potion& item)		//使用道具
 {
 	switch (item.type)
 	{
 	case HPPOTION:
 		if (life == max_life)
-			return;
+			return 0;
 		life += item.size;
 		if (life > max_life)
 			life = max_life;
 		break;
+	default:
+		return -1;
+		break;
 	}
 	item.count--;
+	return 1;
 }
 void Pokemon::hurt(double rate, double dmg)
 {

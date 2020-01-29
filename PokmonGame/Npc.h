@@ -38,6 +38,11 @@ void npc_strat()
 	player.money = 100;
 	player.theMON.push_back(Charmander);
 	player.theMON.push_back(Ciken);
+	hp_potion.count = 5;
+	player.item.push_back(hp_potion);
+	ball.count = 10;
+	player.item.push_back(ball);
+	
 
 	npc[1].x = 100;
 	npc[1].y = 150;
@@ -53,5 +58,7 @@ void npc_strat()
 	npc[1].useNo = 0;
 	npc[1].money = 100;
 	npc[1].theMON.push_back(Ciken);
+	hp_potion.count = 2;
+	npc[1].item.push_back(hp_potion);
 
 }
