@@ -1,10 +1,17 @@
 #pragma once
+#include <string>
+class Skill;
+class Npc;
+class Pokemon;
+class Object;
+class Item;
 
+void battleshow(const Npc&);		//绘制战斗场景
 void playmic(string name, string odds = "");
 void stopmic(string name);
 void Settxt(int color = BLACK, int hight = 0, int weight = 400, int width = 0);
-void darwmsg(string m);
 template <class T, class S> int  CalculateDIS(T n1, S n2);		//计算距离
+
 
 void playmic(string name, string odds)
 {
@@ -39,3 +46,4 @@ void Settxt(int color, int hight, int weight, int width)
 	settextstyle(&f);                     // 应用字体样式
 	setbkmode(TRANSPARENT);
 }
+

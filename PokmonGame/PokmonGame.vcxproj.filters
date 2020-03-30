@@ -33,6 +33,15 @@
     <ClInclude Include="default.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="SaveLoadData.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gamecpp声明.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="starup.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">

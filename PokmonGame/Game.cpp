@@ -8,26 +8,31 @@
 		---》背包{数组)										 初步完成
 		---》菜单											 初步完成
 		---》精灵列表(数组)									 初步完成
-		---> 开始界面										 
+		---> 开始界面										 未完成
 		---》训练师名片										 完成
 	4.事件系统  （包括 触发剧情，引起打斗，对话）
 		---> 触发对战										 完成
 		---》对话（文本考虑用文件方式只读）					 完成
 		---》随机遇敌										 完成
-	5.战斗系统  （场景绘制，技能选择，精灵状态变化，背包道具数量变化，技能动画） 未完成(最大难点）
-		---》场景绘制										 部分完成
+	5.战斗系统  （场景绘制，技能选择，精灵状态变化，背包道具数量变化，技能动画）
+		---》场景绘制										部分完成
 		---》技能											初步完成
 		---》逃跑											初步完成
 		——》捕捉											初步完成
 		---》切换											完成
 	6.音乐（背景音乐，战斗音乐，技能音效)					大部分完成
-	7.存档系统
+	7.存档系统												未完成
 	8.道具系统												初步完成
 */
-// ！！：背包改成多重链表
+// ！！!!!!!!：背包改成多重链表
+// ！！：单独的技能函数
+// !:技能特效框架构建好了，等待完善 （效率太低了，累了)
+//2020.2.28 做好了火苗的特效 但是改了一堆声明 代码更乱了！ 感觉还不错吧，毕竟终于做出个特效来了
 #include <iostream>
 #include <string>
+#include <easyx.h>
 #include <vector>
+#include <map>
 #include <list>
 #include <algorithm>
 #include <fstream> 
@@ -39,106 +44,67 @@
 #include <mmsystem.h>
 #include "Item.h"
 #include "default.h"
-#include "Skill.h"
 #include "Pokemon.h"
 #include "Object.h"
 #include "Npc.h"
-#pragma comment(lib,"Winmm.lib")
+#include "Skill.h"
+#include "SaveLoadData.h"
+#include "gamecpp声明.h"
+#include "starup.h"
+#pragma comment(lib, "winmm.lib")
 using namespace std;
 
-#define cUP 1
-#define cLF 2
-#define cDN 3
-#define cRT 4
-
-#define CATCH -3
-#define RUN -2
-#define LOSE -1
-#define VICTOR 0
-
-
-void startup();													//初始化参数
-void main_mapstart();											//main地图初始化
-void npc_strat();												//main地图角色初始化
-void updata();													//刷新画面
-void npcmove(Npc&);												//npc随机移动
-void scanINPUT();												//检查输入
-void cantmove(const Npc&, bool[]);								//障碍物判断
-void interface_switch();										//界面切换动画
-template <class T> void darwmsg(T);								//显示一个对话框
-//--------------------菜单------------------
-void MenuSys();
-void MenuShow();
-void MenuInput();
-//--------------------背包-------------------
-void BagSys();
-void BagShow();
-void BagInput();
-void BagUse();
-//-----------------名片-------------------
-void CardSys();
-void CardShow();
-//-------------------战斗--------------------
-void battlesys(Npc&);				//战斗系统
-void battleshow(const Npc&);		//绘制战斗场景
-void battlestart(Npc&);				//开场动画及初始化
-void battlefinish(Npc&);			//战斗结束动画
-void battleinput(Npc&);				//战斗时输入检测
-void battleSuccess(Npc&);			//战斗胜利动画
-void battleLose();					//战斗失败效果
-void battlemusic_open();			//战斗相关音乐打开
-void battlemusic_close();			//………………关闭
-void battlemenu();					//战斗时的菜单
-void playerAttack(Npc&, int);		//玩家攻击动画及效果
-void playerRun(Npc&);				//逃跑
-void emyAttack(Npc&);				//敌人进攻
-int emySkill(Pokemon&);				//敌人技能使用逻辑
-void attackflush(Npc);				//攻击动画
-int is_over(const Npc&);
-void switchPokmon(Npc&);			//切换精灵
-void WildMet();						//野生遭遇战
-void PokemonCatch(const Npc&);
-
-IMAGE ground;			//背景
-IMAGE msgbk[10];		//对话框 (0:战斗 1：对话 2:菜单）
-IMAGE bottom[10];		//按钮 （0：攻击 1:指示器）
-IMAGE bag[3];			//三个背包
-IMAGE PKlist[5];		//0：背景图，1：选择框，2：选择框掩码，3：大框，4：大框掩码图；
-IMAGE statebk[10];		//战斗时的技能窗口  （0：火 1：水）
-IMAGE battle;			//战斗画面
-IMAGE card;				//名片背景
-IMAGE roleOnCard[2];	//名片人像
-
-
-int mapSIZEx, mapSIZEy;				//地图大小
-int mapX, mapY;						//地图坐标
-int cover_glass[1000][1000];		//地图g
-/*menu*/
-int pointX, pointY;					//菜单指示器
-int menu_close;						//控制关闭菜单
-/*pklist*/
-int pklist_close;					//控制关闭列表
-int pki;							//精灵列表的序号
-/*bag*/
-int bag_close;						//控制关闭背包
-bool onBattle;						//是否在战斗中打开背包
-int bagi;							//当前背包页面序号
-int codei;							//当前选中的物品序号
-int codemin, codemax;				//背包当前页面中最小物品序号和最大物品序号
-int point2X, point2Y;				//背包指示器
-/*battle*/
-int battle_close;					//控制战斗结束
-int turn;							//1:敌人，-1:玩家1，-2：玩家2， -3：捕捉
-int point3X, point3Y;				//战斗菜单的指示器
-int playerflush;					//控制玩家攻击动画
-int emyflush;						//控制敌人攻击动画
-int onPlay;							//控制濒死音效播放
-/*game_time*/
-time_t gameStart;
-time_t gameEnd;
-int timeSave;
-
-
+void load()
+{
+	FILE* saveData;
+	saveData = fopen("save_player_default.txt","rb");
+	npcSave temp_npc;
+	/*玩家信息*/
+	fread(&temp_npc, sizeof(npcSave), 1, saveData);
+	temp_npc.write(player);
+	timeSave = temp_npc.time;
+	mapX = temp_npc.mapx;
+	mapY = temp_npc.mapy;
+	fclose(saveData);
+	/*npc信息*/
+	saveData = fopen("save_npc_default.txt", "rb");
+	for (int i = 0; i < npc.size(); i++) {
+		fread(&temp_npc, sizeof(npcSave), 1, saveData);
+		if (feof(saveData)) break;
+		temp_npc.write(npc[i]);
+	}
+	fclose(saveData);
+}
+void save()
+{
+	drawamsg("正在保存。。。");
+	FILE* saveData;
+	/*玩家信息*/
+	saveData = fopen("save_player_default.txt", "wb");
+	npcSave temp_npc;
+	temp_npc.read(player);
+	//获取游戏时长
+	time(&gameEnd);
+	int timetotal = difftime(gameEnd, gameStart) + timeSave;
+	//
+	temp_npc.mapx = mapX;
+	temp_npc.mapy = mapY;
+	temp_npc.time = timetotal;
+	fwrite(&temp_npc, sizeof(npcSave), 1, saveData);
+	fclose(saveData);
+	/*npc信息*/
+	saveData = fopen("save_npc_default.txt", "wb");
+	for (int i = 0; i< npc.size();i++) {
+		temp_npc.read(npc[i]);
+		fwrite(&temp_npc, sizeof(npcSave), 1, saveData);
+		if (feof(saveData)) break;
+	}
+	fclose(saveData);
+	playmic("savemic");
+	drawamsg("保存成功。。。");
+	system("pause");
+	updata();
+}
 void main_mapstart()
 {
 	mapSIZEx = 990;
@@ -168,14 +134,16 @@ void startup()
 	pokemon_start();
 	itemstart();
 	npc_strat();
+	load();
 	
 
-	//播放背景音乐
+	//音乐初始化
 	mciSendString(_T("open test\\backmic.mp3 alias backmusic"), NULL, 0, NULL);
 	mciSendString(_T("play backmusic repeat"), NULL, 0, NULL);
 	mciSendString("open test\\chose.mp3 alias chosemic", 0, 0, 0);
 	mciSendString("open test\\升级.mp3 alias levelupmic", 0, 0, 0);
 	mciSendString("open test\\撞墙.mp3 alias movemic", 0, 0, 0);
+	mciSendString("open test\\保存成功.mp3 alias savemic", 0, 0, 0);
 
 	BeginBatchDraw();
 
@@ -184,10 +152,10 @@ void startup()
 	loadimage(&player.picB, "test\\ROLEblack.png");
 	loadimage(&player.battlepic, "test\\ROLEfight.png");
 	loadimage(&player.battlepicB, "test\\ROLEfightblack.png");
-	loadimage(&npc[1].picB, "test\\npc2black.png");
-	loadimage(&npc[1].pic, "test\\npc2.png");
-	loadimage(&npc[1].battlepic, "test\\npc1fight.png");
-	loadimage(&npc[1].battlepicB, "test\\npc1fightblack.png");
+	loadimage(&npc[0].picB, "test\\npc2black.png");
+	loadimage(&npc[0].pic, "test\\npc2.png");
+	loadimage(&npc[0].battlepic, "test\\npc1fight.png");
+	loadimage(&npc[0].battlepicB, "test\\npc1fightblack.png");
 	loadimage(&battle, "test\\battle1.png");
 	loadimage(&card, "test\\card.png");
 	loadimage(&roleOnCard[0], "test\\roleOnCardB.png");
@@ -215,8 +183,6 @@ void startup()
 	board[1].x = 250;//246;
 	board[1].y = 210;//668;
 	board[1].text = "board1text.txt";
-
-	timeSave = 4000;					//暂时
 }
 void cantmove(const Npc& role, bool can[])
 {
@@ -234,7 +200,7 @@ void cantmove(const Npc& role, bool can[])
 		can[cLF] = 0;
 }
 template <class T>
-void darwmsg(T role)  //绘制剧情对话框
+void drawmsg(const T& role)  //绘制剧情对话框
 {
 	Settxt(BLACK);
 	char s[100] = "";
@@ -249,7 +215,7 @@ void darwmsg(T role)  //绘制剧情对话框
 		FlushBatchDraw();
 		system("pause"); //按任意键继续
 	}
-	if (role.fight = true && !player.theMON[player.useNo].life) {
+	if (role.fight == true && !player.theMON[player.useNo].life) {
 		putimage(0, 403, &msgbk[1]);
 		strcpy(s, "你的首发精灵没有体力了");
 		outtextxy(60, 420, s);
@@ -258,13 +224,12 @@ void darwmsg(T role)  //绘制剧情对话框
 	}
 	msg.close(); //关闭
 }
-void darwmsg(string m)	//绘制一条信息
+void drawamsg(string m)	//绘制一条信息
 {
 	Settxt(BLACK);
 	putimage(0, 403, &msgbk[1]);
 	outtextxy(60, 420, m.c_str());
 	FlushBatchDraw();
-	system("pause");
 }
 void interface_switch()								//界面切换动画
 {
@@ -293,9 +258,9 @@ void updata()
 	//role1
 	putimage(player.x, player.y, player.sizex, player.sizey, &player.picB, player.sizex * player.state, 0, NOTSRCERASE);  //原图白底，掩码图黑底
 	putimage(player.x, player.y, player.sizex, player.sizey, &player.pic, player.sizex * player.state, 0, SRCINVERT);
-	//npc[1]
-	putimage(npc[1].x, npc[1].y, npc[1].sizex, npc[1].sizey, &npc[1].picB, npc[1].sizex * npc[1].state, 0, NOTSRCERASE);  //原图白底，掩码图黑底
-	putimage(npc[1].x, npc[1].y, npc[1].sizex, npc[1].sizey, &npc[1].pic, npc[1].sizex * npc[1].state, 0, SRCINVERT);
+	//npc[0]
+	putimage(npc[0].x, npc[0].y, npc[0].sizex, npc[0].sizey, &npc[0].picB, npc[0].sizex * npc[0].state, 0, NOTSRCERASE);  //原图白底，掩码图黑底
+	putimage(npc[0].x, npc[0].y, npc[0].sizex, npc[0].sizey, &npc[0].pic, npc[0].sizex * npc[0].state, 0, SRCINVERT);
 
 	FlushBatchDraw();
 }
@@ -385,10 +350,10 @@ void PKlistshow()
 	Settxt(WHITE);
 	putimage(0, 0, &PKlist[0]);   //背景
 	/*首发*/
-	putimage(2 + (pki == 0) * 2, 39, 173, 144, &PKlist[4], (pki == 0) * 173, 0, NOTSRCERASE);   //大框
-	putimage(2 + (pki == 0) * 2, 39, 173, 144, &PKlist[3], (pki == 0) * 173, 0, SRCINVERT);
-	putimage(33, 67, &player.theMON[player.useNo].piclistB, NOTSRCERASE);   //首发精灵
-	putimage(33, 67, &player.theMON[player.useNo].piclist, SRCINVERT);
+	putimage(2, 39, 173, 144, &PKlist[4], (pki == 0) * 173, 0, NOTSRCERASE);   //大框
+	putimage(2, 39, 173, 144, &PKlist[3], (pki == 0) * 173, 0, SRCINVERT);
+	putimage(33, 67+(pkjump>0 && pki == 0)*3, &player.theMON[player.useNo].piclistB, NOTSRCERASE);   //首发精灵
+	putimage(33, 67+(pkjump > 0 && pki == 0)* 3, &player.theMON[player.useNo].piclist, SRCINVERT);
 	sprintf(lv, "%2d", player.theMON[player.useNo].level);
 	sprintf(hp, "%3d  %3d", player.theMON[player.useNo].life, player.theMON[player.useNo].max_life);
 	outtextxy(105, 97, lv);
@@ -404,8 +369,8 @@ void PKlistshow()
 		sprintf(hp, "%3d  %3d", player.theMON[i].life, player.theMON[i].max_life);
 		putimage(176, y2, 300, 48, &PKlist[2], 0, (pki == i) * 48, NOTSRCERASE);
 		putimage(176, y2, 300, 48, &PKlist[1], 0, (pki == i) * 48, SRCINVERT);
-		putimage(212, y1 + (pki == i) * 2, &player.theMON[i].piclistB, NOTSRCERASE);
-		putimage(212, y1 + (pki == i) * 2, &player.theMON[i].piclist, SRCINVERT);
+		putimage(212, y1 + (pkjump > 0 && pki == i) * 3, &player.theMON[i].piclistB, NOTSRCERASE);
+		putimage(212, y1 + (pkjump > 0 && pki == i) * 3, &player.theMON[i].piclist, SRCINVERT);
 		outtextxy(280, y2 + 26, lv);
 		outtextxy(393, y2 + 26, hp);
 	}
@@ -428,7 +393,7 @@ void PKlistinput()
 			pki = 1;
 		}
 		else if (GetAsyncKeyState(0x41) & 0x8000) {  //A
-			if (onBattle && player.theMON[player.useNo].life == 0) {
+			if (onBattle && player.theMON[pki].life == 0) {
 				Settxt(BLACK);
 				outtextxy(20, 280, "没有反应");
 				FlushBatchDraw();
@@ -445,6 +410,7 @@ void PKlistinput()
 			swap(player.theMON[player.useNo],player.theMON[pki]);
 			if (onBattle) {
 				pklist_close = 0;
+				turn *= -1;
 			}
 		}
 		else if (GetAsyncKeyState(0x44) & 0x8000) { //D
@@ -458,11 +424,16 @@ void PKlistsys()
 {
 	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 	pklist_close = 1;
+	pkjump = -250;
 	cleardevice();
 	Resize(0, 480, 322);
 	while (pklist_close) {
 		PKlistshow();
 		PKlistinput();
+		if (pkjump < 250)
+			pkjump++;
+		else
+			pkjump = -250;
 	}
 	Resize(0, 495, 463);
 	if(!onBattle) updata();
@@ -615,7 +586,7 @@ void MenuInput()
 	if (_kbhit()) {
 		playmic("chosemic");
 		if (GetAsyncKeyState(VK_UP) & 0x8000) {
-			if (pointY > 70)
+			if (pointY > 73)
 				pointY -= 22;
 		}
 		else if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
@@ -635,6 +606,9 @@ void MenuInput()
 				break;
 			case 117://第三个
 				CardSys();
+				break;
+			case 139:
+				save();
 				break;
 			}
 		}
@@ -747,9 +721,11 @@ void playerAttack(Npc& emy, int no)
 		FlushBatchDraw();
 		Sleep(600);
 		turn = 1;
+		r = 0;
 	}
 	else {
 		attackflush(emy);
+		skl.play(emy);
 		playmic("attackmic");
 		//属性克制的判定
 		putimage(0, 279, &msgbk[0]);    //覆盖之前的画面
@@ -786,6 +762,13 @@ void playerAttack(Npc& emy, int no)
 }
 void playerRun(Npc& emy)
 {
+	if (emy.fight == 1) {
+		putimage(0, 279, &msgbk[0]);    //覆盖之前的画面
+		outtextxy(40, 300, "跟训练师对战时不能临阵脱逃！");
+		FlushBatchDraw();
+		Sleep(1000);
+		return;
+	}
 	srand(time(NULL));
 	int pro = 0;										//概率,（1~9）对应（10%~100%)
 	Pokemon* emypok = &emy.theMON[emy.useNo];
@@ -892,7 +875,7 @@ void emyAttack(Npc& emy)				//敌人的攻击方式
 		1.血量充足则攻击
 		2.血量不足回血
 	*/
-	if (emy.theMON[emy.useNo].life <= emy.theMON[emy.useNo].max_life * 0.25
+	if (emy.theMON[emy.useNo].life <= emy.theMON[emy.useNo].max_life * 0.25 && emy.item.size()> 0
 		&& emy.item[0].count > 0)
 	{
 		outtextxy(40, 300, "对方使用了伤药");
@@ -972,6 +955,9 @@ void battlemusic_open()							//关闭背景音乐 打开战斗音乐
 	mciSendString("open test\\胜利.mp3 alias successmic", 0, 0, 0);
 	mciSendString("open test\\逃跑.mp3 alias runmic", 0, 0, 0);
 
+	//技能音效
+	mciSendString("open test\\火苗.mp3 alias f1mic", 0, 0, 0);
+	mciSendString("open test\\水枪.mp3 alias w1mic", 0, 0, 0);
 }
 void battlemusic_close()
 {
@@ -982,7 +968,7 @@ void battlemusic_close()
 	mciSendString("close covermic", 0, 0, 0);
 	mciSendString("close throwmic", 0, 0, 0);
 	mciSendString("close runmic", 0, 0, 0);
-
+	mciSendString("close f1mic", 0, 0, 0);
 	mciSendString("play backmusic repeat", NULL, 0, NULL);
 }
 void battlestart(Npc& emy)														//战斗开始的场景（只播放一次）
@@ -1035,14 +1021,14 @@ void battlestart(Npc& emy)														//战斗开始的场景（只播放一�
 void battlemenu()
 {
 	Pokemon temp = player.theMON[player.useNo];
-	if (turn == -1) {
+	if (turn == -1) {												//总菜单
 		putimage(point3X, point3Y, &bottom[5]);		//指示器 
 		putimage(40, 300, &bottom[0]);				//攻击按钮
 		putimage(254, 300, &bottom[2]);				//背包
 		putimage(40, 380, &bottom[3]);				//精灵列表
 		putimage(254, 380, &bottom[4]);				//逃跑
 	}
-	else if (turn == -2) {
+	else if (turn == -2) {											//技能菜单
 		putimage(point3X, point3Y, &bottom[5]);		//指示器 
 		int i = 0;
 		char s[10];
@@ -1112,23 +1098,24 @@ void switchPokmon(Npc& charater)
 	if (charater.fight == true) //如果是npc
 	{
 		charater.useNo++;
+		turn *= -1;
 		return;
 	}
 	else {
+		PKlistsys();
+		if (turn == -1) return; //如果直接按d退回
+		cleardevice();
+		Settxt(BLACK);//480 322
 		putimage(0, 279, &msgbk[0]);    //覆盖之前的画面
 		outtextxy(40, 300, "你已经尽力了");
 		FlushBatchDraw();
 		Sleep(800);
-		PKlistsys();
-		cleardevice();
-		Settxt(BLACK);//480 322
 		string s = player.theMON[player.useNo].name + ",接下来靠你了";
 		putimage(0, 279, &msgbk[0]);    //覆盖之前的画面
 		outtextxy(40, 300, s.c_str());
 		FlushBatchDraw();
 		Sleep(800);
 	}
-	turn *= -1;
 }
 int is_over(const Npc& emy)   //判断战斗是否结束
 {
@@ -1137,9 +1124,16 @@ int is_over(const Npc& emy)   //判断战斗是否结束
 	if (battle_close == CATCH)
 		return CATCH;
 	if (player.theMON[player.useNo].life <= 0) {
-		if (player.useNo == player.theMON.size() - 1) return LOSE;
+		int flag = 1;
+		for (int i = 0; i < player.theMON.size(); i++)
+		{
+			if (player.theMON[i].life > 0) {
+				flag = 0;
+				break;
+			}
+		}
+		if (flag) return LOSE;
 		else switchPokmon(player);
-
 	}
 	if (emy.theMON[emy.useNo].life <= 0) {
 		if (emy.useNo == emy.theMON.size() - 1) return VICTOR;
@@ -1160,6 +1154,7 @@ void battlefinish(Npc& emy)
 	putimage(330, 64, 120, 120, &emy.battlepic, 0, 0, SRCINVERT);
 	char s[100] = "";
 	putimage(0, 279, &msgbk[0]);
+	stopmic("deadmic");
 	switch (battle_close)
 	{
 	case LOSE:
@@ -1175,7 +1170,7 @@ void battlefinish(Npc& emy)
 		strcpy(s, "你赢的了胜利");
 		outtextxy(40, 300, s);
 		FlushBatchDraw();
-		Sleep(1000);
+		Sleep(2000);
 		battleSuccess(emy);
 		break;
 	case RUN:		
@@ -1184,9 +1179,11 @@ void battlefinish(Npc& emy)
 		strcpy(s, "逃跑成功了");
 		outtextxy(40, 300, s);
 		FlushBatchDraw();
-		Sleep(1000);
+		Sleep(2000);
 		break;
 	case CATCH:
+		stopmic("battlemic");
+		playmic("successmic");
 		strcpy(s, "把捕捉到的宝可梦放回了背包");
 		outtextxy(40, 300, s);
 		FlushBatchDraw();
@@ -1237,6 +1234,7 @@ void WildMet()
 	Npc emy_temp;
 	emy_temp.useNo = 0;
 	emy_temp.money = 0;
+	emy_temp.fight = 0;
 	emy_temp.theMON.push_back(Wild[rand() % (Wild.size())]);
 	battlesys(emy_temp);
 }
@@ -1285,8 +1283,6 @@ void PokemonCatch(const Npc& emy)
 		Sleep(1000);
 	}
 	if (cnt == 3) {
-		stopmic("battlemic");
-		playmic("successmic");
 		outtextxy(40, 300, "成功了！");
 		FlushBatchDraw();
 		Sleep(1000);
@@ -1315,14 +1311,14 @@ void scanINPUT()
 		if (cover_glass[player.y - mapY][player.x - mapX] == 1)
 			WildMet();
 		if (can[cRT]) {
-			if (player.x < 463)
-				if (mapX + mapSIZEx > 495)
-					player.x += 2;
-				else
-					player.x += 4;
-			if (mapX + mapSIZEx > 495) {
-				mapX -= 3;
-				npc[1].x -= 3;
+			//if (player.x < 463)
+			//	if (mapX + mapSIZEx > 495)
+			//		player.x += 2;
+			//	else
+			//		player.x += 4;
+			if (/*mapX + mapSIZEx > 495*/1) {
+				mapX -= SPEED;
+				npc[0].x -= SPEED;
 			}
 		}
 		else playmic("movemic");
@@ -1335,14 +1331,14 @@ void scanINPUT()
 		if (cover_glass[player.y - mapY][player.x - mapX] == 1)
 			WildMet();
 		if (can[cLF]) {
-			if (player.x > 0)
-				if (mapX < 0)
-					player.x -= 2;
-				else
-					player.x -= 4;
-			if (mapX < 0) {
-				mapX += 3;
-				npc[1].x += 3;
+			//if (player.x > 0)
+			//	if (mapX < 0)
+			//		player.x -= 2;
+			//	else
+			//		player.x -= 4;
+			if (/*mapX < 0*/1) {
+				mapX += SPEED;
+				npc[0].x += SPEED;
 			}
 		}
 		else playmic("movemic");
@@ -1354,14 +1350,14 @@ void scanINPUT()
 		if (cover_glass[player.y - mapY][player.x - mapX] == 1)
 			WildMet();
 		if (can[cUP]) {
-			if (player.y > 0)
-				if (mapY < 0)
-					player.y -= 2;
-				else
-					player.y -= 3;
-			if (mapY < 0) {
-				mapY += 3;
-				npc[1].y += 3;
+			//if (player.y > 0)
+			//	if (mapY < 0)
+			//		player.y -= 2;
+			//	else
+			//		player.y -= 3;
+			if (/*mapY < 0*/1) {
+				mapY += SPEED;
+				npc[0].y += SPEED;
 			}
 		}
 		else playmic("movemic");
@@ -1373,14 +1369,14 @@ void scanINPUT()
 		if (cover_glass[player.y - mapY][player.x - mapX] == 1)
 			WildMet();
 		if (can[cDN]) {
-			if (player.y < 428)
-				if (mapY + mapSIZEy > 464)
-					player.y += 2;
-				else
-					player.y += 3;
-			if (mapY + mapSIZEy > 464) {
-				mapY -= 3;
-				npc[1].y -= 3;
+			//if (player.y < 428)
+			//	if (mapY + mapSIZEy > 464)
+			//		player.y += 2;
+			//	else
+			//		player.y += 3;
+			if (/*mapY + mapSIZEy > 464*/1) {
+				mapY -= SPEED;
+				npc[0].y -= SPEED;
 			}
 		}
 		else playmic("movemic");
@@ -1392,12 +1388,12 @@ void scanINPUT()
 	else if (GetAsyncKeyState(0x41) & 0x8000) {
 		int i = cover_glass[player.y - mapY - 10][player.x - mapX];
 		if (i <= -2) {
-			darwmsg(board[abs(i) - 1]);
+			drawmsg(board[abs(i) - 1]);
 		}
-		else if (CalculateDIS(player, npc[1]) < 15) {
-			darwmsg(npc[1]);
-			if (npc[1].fight == true && player.theMON[player.useNo].life)
-				battlesys(npc[1]);
+		else if (CalculateDIS(player, npc[0]) < 15) {
+			drawmsg(npc[0]);
+			if (npc[0].fight == true && player.theMON[player.useNo].life)
+				battlesys(npc[0]);
 		}
 		Sleep(200);
 	}
@@ -1417,7 +1413,7 @@ int main()
 		scanINPUT();
 		updata();
 		Sleep(70);
-		npcmove(npc[1]);
+		npcmove(npc[0]);
 	};
 	EndBatchDraw();
 	closegraph();

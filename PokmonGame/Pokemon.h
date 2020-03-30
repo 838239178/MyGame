@@ -1,11 +1,16 @@
 #pragma once
+#define MAXSIZE 10
+#define NORMAL 0
+#define FIRE 1
+#define WATER 2
+#define GLASS 3
 typedef Item Potion;
 using namespace std;
 class Pokemon
 {
 public:
-	string name;
 	vector<Skill>skill; //拥有的技能
+	string name;
 	int level;			//等级
 	int property;		//属性
 	int max_life;		//最大生命值
@@ -20,62 +25,17 @@ public:
 	IMAGE picB[2];
 	IMAGE piclist;		//列表小图标
 	IMAGE piclistB;
-	string text;		//存档地址
 	/*类函数*/
 	void levelup();
 	int use(Potion&);
 	void hurt(double, double);
 };
 
-Pokemon Ciken;        //水鸡
-Pokemon Charmander;   //小火龙
+Pokemon Poks[MAXSIZE];
+#define Ciken Poks[0]	//水鸡
+#define Charmander Poks[1] //小火龙 
+
 vector<Pokemon>Wild;
-
-void pokemon_start()
-{
-	//图片
-	/*小火龙*/
-	loadimage(&Charmander.pic[0], "test\\firedragon_self.png");
-	loadimage(&Charmander.picB[0], "test\\firedragonblack_self.png");
-	loadimage(&Charmander.pic[1], "test\\firedragon_emy.png");
-	loadimage(&Charmander.picB[1], "test\\firedragonblack_emy.png");
-	loadimage(&Charmander.piclist, "test\\小火龙图标.png");
-	loadimage(&Charmander.piclistB, "test\\小火龙图标B.png");
-	/*水稚鸡*/
-	loadimage(&Ciken.pic[0], "test\\ciken_self.png");
-	loadimage(&Ciken.picB[0], "test\\cikenblack_self.png");
-	loadimage(&Ciken.pic[1], "test\\ciken_emy.png");
-	loadimage(&Ciken.picB[1], "test\\cikenblack_emy.png");
-	loadimage(&Ciken.piclist, "test\\水稚鸡图标.png");
-	loadimage(&Ciken.piclistB, "test\\水稚鸡图标B.png");
-	//基本属性
-	Ciken.max_life = 100;
-	Ciken.level = 1;
-	Ciken.ATK = 10;
-	Ciken.INK = 12;
-	Ciken.need_EXP = 50;
-	Ciken.EXP = 0;
-	Ciken.life = Ciken.max_life;
-	Ciken.property = WATER;
-	Ciken.skill.push_back(n_1);
-	Ciken.skill.push_back(w_1);
-	Ciken.name = "水稚鸡";
-
-	Charmander.max_life = 100;
-	Charmander.level = 1;
-	Charmander.ATK = 12;
-	Charmander.INK = 10;
-	Charmander.need_EXP = 50;
-	Charmander.EXP = 0;
-	Charmander.life = Charmander.max_life;
-	Charmander.property = FIRE;
-	Charmander.skill.push_back(f_1);
-	Charmander.skill.push_back(n_1);
-	Charmander.name = "小火龙";
-
-	Wild.push_back(Ciken);
-	Wild.push_back(Charmander);
-}
 
 void Pokemon::levelup()				//升级
 {

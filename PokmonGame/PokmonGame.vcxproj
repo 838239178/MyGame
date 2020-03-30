@@ -23,7 +23,7 @@
     <ProjectGuid>{B1AE3E59-D471-491A-8CFD-B4CCEC167200}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>PokmonGame</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -156,11 +156,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="default.h" />
+    <ClInclude Include="gamecpp声明.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Npc.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Pokemon.h" />
+    <ClInclude Include="SaveLoadData.h" />
     <ClInclude Include="Skill.h" />
+    <ClInclude Include="starup.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
