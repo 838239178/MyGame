@@ -22,6 +22,7 @@ void pokemon_start()
 	loadimage(&Ciken.piclist, "test\\水稚鸡图标.png");
 	loadimage(&Ciken.piclistB, "test\\水稚鸡图标B.png");
 	//基本属性
+	Ciken.No = 0;
 	Ciken.max_life = 100;
 	Ciken.level = 1;
 	Ciken.ATK = 10;
@@ -34,6 +35,7 @@ void pokemon_start()
 	Ciken.skill.push_back(w_1);
 	Ciken.name = "水稚鸡";
 
+	Charmander.No = 1;
 	Charmander.max_life = 100;
 	Charmander.level = 1;
 	Charmander.ATK = 12;
@@ -61,6 +63,7 @@ void skill_startup()
 	loadimage(&w_1.pic[2], "test\\水枪part2B.png");
 	loadimage(&w_1.pic[3], "test\\水枪part2.png");
 
+	f_1.No = 0;
 	f_1.property = FIRE;
 	f_1.power = 15;
 	f_1.name = "火苗";
@@ -69,6 +72,7 @@ void skill_startup()
 	f_1.type = INT;
 	f_1.play = f1;
 
+	w_1.No = 1;
 	w_1.property = WATER;
 	w_1.power = 15;
 	w_1.name = "水枪";
@@ -77,6 +81,7 @@ void skill_startup()
 	w_1.type = INT;
 	w_1.play = w1;
 
+	n_1.No = 2;
 	n_1.property = NORMAL;
 	n_1.power = 12;
 	n_1.name = "撞击";
@@ -100,8 +105,8 @@ void npc_strat()
 	player.fight = -1;
 	player.useNo = 0;
 	player.money = 100;
-	player.theMON.push_back(Charmander);
-	player.theMON.push_back(Ciken);
+	//player.theMON.push_back(Charmander);
+	//player.theMON.push_back(Ciken);
 	hp_potion.count = 5;
 	player.item.push_back(hp_potion);
 	ball.count = 10;

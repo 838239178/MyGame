@@ -27,7 +27,7 @@ public:
 #define POK 1
 Item items[10];
 #define hp_potion items[0]			//回血药
-#define ball items[1]
+#define ball items[1]				//精灵球
 
 string Item::typestr() {			//返回物品的作用参数
 	switch (type)

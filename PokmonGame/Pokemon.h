@@ -9,10 +9,11 @@ using namespace std;
 class Pokemon
 {
 public:
+	int No;				//编号
 	vector<Skill>skill; //拥有的技能
 	string name;
-	int level;			//等级
 	int property;		//属性
+	int level;			//等级
 	int max_life;		//最大生命值
 	int life;			//当前生命值
 	int ATK;			//攻击力
@@ -29,6 +30,7 @@ public:
 	void levelup();
 	int use(Potion&);
 	void hurt(double, double);
+	void buff(double, double);
 };
 
 Pokemon Poks[MAXSIZE];

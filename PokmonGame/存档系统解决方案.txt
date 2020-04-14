@@ -1,0 +1,11 @@
+存档
+（用三个独立的txt存储这些信息）
+1.角色
+npc的fight, 坐标
+player的 money，time，item，pokmon，坐标
+2.item
+结构体存储
+名称，数量等
+3.pokemon
+结构体存储
+等级，属性等

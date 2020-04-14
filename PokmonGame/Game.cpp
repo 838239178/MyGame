@@ -74,19 +74,30 @@ void load()
 		temp_npc.write(npc[i]);
 	}
 	fclose(saveData);
+	/*精灵信息*/
+	pokeSave temp_pok;
+	Pokemon tp;
+	saveData = fopen("save_player_pokemon.txt", "rb");
+	while (1) {
+		fread(&temp_pok, sizeof(pokeSave), 1, saveData);
+		if (feof(saveData)) break;
+		tp = Poks[temp_pok.No];
+		temp_pok.write(tp);
+		player.theMON.push_back(tp);
+	}
+
 }
 void save()
 {
 	drawamsg("正在保存。。。");
-	FILE* saveData;
+	FILE* saveData;	
+	//获取游戏时长
+	time(&gameEnd);
+	int timetotal = difftime(gameEnd, gameStart) + timeSave;
 	/*玩家信息*/
 	saveData = fopen("save_player_default.txt", "wb");
 	npcSave temp_npc;
 	temp_npc.read(player);
-	//获取游戏时长
-	time(&gameEnd);
-	int timetotal = difftime(gameEnd, gameStart) + timeSave;
-	//
 	temp_npc.mapx = mapX;
 	temp_npc.mapy = mapY;
 	temp_npc.time = timetotal;
@@ -100,6 +111,15 @@ void save()
 		if (feof(saveData)) break;
 	}
 	fclose(saveData);
+	/*玩家精灵信息*/
+	pokeSave temp_pok;
+	saveData = fopen("save_player_pokemon.txt", "wb");
+	for (int i = 0; i < player.theMON.size(); i++) {
+		temp_pok.read(player.theMON[i]);
+		fwrite(&temp_pok, sizeof(pokeSave), 1, saveData);
+	}
+	fclose(saveData);
+	//
 	playmic("savemic");
 	drawamsg("保存成功。。。");
 	system("pause");
@@ -1226,11 +1246,15 @@ void battlesys(Npc& emy)   //战斗系统
 void WildMet()
 {
 	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
-	/*判定 13.3%*/
+	static time_t before = 0;
+	time_t temp;
+	/*判定 20% 且 15秒内不会第二次遇敌*/
 	srand(time(0));
+	time(&temp);
 	int r = rand() % 15;
-	if (r >= 2)return;
+	if (r >= 3 || difftime(temp,before)<= 15) return;
 	/*创建临时作战敌人*/
+	time(&before);
 	Npc emy_temp;
 	emy_temp.useNo = 0;
 	emy_temp.money = 0;

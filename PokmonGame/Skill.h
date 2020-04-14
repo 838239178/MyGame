@@ -13,6 +13,7 @@
 
 class Skill {
 public:
+	int No;				//编号
 	int property;		//属性
 	int power;			//威力（基础伤害）
 	string name;		//技能名
@@ -27,9 +28,11 @@ public:
 
 	Skill() { property = power = PP = PPmax = type = 0; }
 };
-Skill f_1;				//火苗
-Skill w_1;				//水枪
-Skill n_1;				//撞击
+Skill skls[MAXSIZE];	
+#define f_1 skls[0]	//火苗
+#define w_1 skls[1]	//水枪
+#define n_1 skls[2]	//撞击
+			
 /*单独技能函数*/
 void f1(Npc&);
 void w1(Npc&);
